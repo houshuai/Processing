@@ -166,7 +166,7 @@ namespace Processing
                     if (project[i, j] < filterProject)
                     {
                         isReached[i, j] = true;
-                        //project[i, j] = 1.70141e38;
+                        //result[i, j] = 1.70141e38;
                     }
                 }
             }

@@ -21,34 +21,34 @@
         </Grid.RowDefinitions>
         <Menu Name="MainMenu" Grid.ColumnSpan="2">
             <MenuItem Header="OpenAnomaly" Command="{Binding OpenFileCommand}" CommandParameter="Anomaly" Height="{Binding ElementName=MainMenu,Path=ActualHeight}"/>
-            <MenuItem Header="OpenLocal" Command="{Binding OpenFileCommand}" CommandParameter="Local"/>
+            <MenuItem Header="OpenSecond" Command="{Binding OpenFileCommand}" CommandParameter="Local"/>
             <MenuItem Header="EdgeDetection" Click="EdgeDetectionMenu_Click"/>
             <MenuItem Header="Separation" Click="SeparationMenu_Click"/>
-            <MenuItem Header="Anomaly Minus Local" Command="{Binding GridMinusCommand}"/>
-            <MenuItem Header="Simplify" Command="{Binding GridSimplifyCommand}"/>
+            <MenuItem Header="Anomaly Minus" Command="{Binding GridMinusCommand}"/>
+            <MenuItem Header="FillRestore" Command="{Binding FillRestoreCommand}"/>
             <MenuItem Header="SaveResult" Command="{Binding SaveFileCommand}" CommandParameter="Result"/>
-            <MenuItem Header="SaveResultLocal" Command="{Binding SaveFileCommand}" CommandParameter="Local"/>
+            <MenuItem Header="SaveSecondResult" Command="{Binding SaveFileCommand}" CommandParameter="Local"/>
         </Menu>
         <Image Source="{Binding AnomalyMap}" Grid.Row="1"/>
         <TextBlock Text="Max" Grid.Row="1"/>
         <TextBlock Text="{Binding AnomalyMax}" Margin="30,0,0,0" Grid.Row="1"/>
         <TextBlock Text="Min" Margin="0,20,0,0" Grid.Row="1"/>
         <TextBlock Text="{Binding AnomalyMin}" Margin="30,20,0,0" Grid.Row="1"/>
-        <Image Source="{Binding LocalMap}" Grid.Row="1" Grid.Column="1"/>
+        <Image Source="{Binding SedondMap}" Grid.Row="1" Grid.Column="1"/>
         <TextBlock Text="Max" Grid.Row="1" Grid.Column="1"/>
-        <TextBlock Text="{Binding LocalMax}" Margin="30,0,0,0" Grid.Row="1" Grid.Column="1"/>
+        <TextBlock Text="{Binding SedondMax}" Margin="30,0,0,0" Grid.Row="1" Grid.Column="1"/>
         <TextBlock Text="Min" Margin="0,20,0,0" Grid.Row="1" Grid.Column="1"/>
-        <TextBlock Text="{Binding LocalMin}" Margin="30,20,0,0" Grid.Row="1" Grid.Column="1"/>
+        <TextBlock Text="{Binding SedondMin}" Margin="30,20,0,0" Grid.Row="1" Grid.Column="1"/>
         <Image Source="{Binding ResultMap}" Grid.Row="2"/>
         <TextBlock Text="Max" Grid.Row="2"/>
         <TextBlock Text="{Binding ResultMax}" Margin="30,0,0,0" Grid.Row="2"/>
         <TextBlock Text="Min" Margin="0,20,0,0" Grid.Row="2"/>
         <TextBlock Text="{Binding ResultMin}" Margin="30,20,0,0" Grid.Row="2"/>
-        <Image Source="{Binding ResultLocalMap}" Grid.Row="2" Grid.Column="1"/>
+        <Image Source="{Binding SecondResultMap}" Grid.Row="2" Grid.Column="1"/>
         <TextBlock Text="Max" Grid.Row="2" Grid.Column="1"/>
-        <TextBlock Text="{Binding ResultLocalMax}" Margin="30,0,0,0" Grid.Row="2" Grid.Column="1"/>
+        <TextBlock Text="{Binding SecondResultMax}" Margin="30,0,0,0" Grid.Row="2" Grid.Column="1"/>
         <TextBlock Text="Min" Margin="0,20,0,0" Grid.Row="2" Grid.Column="1"/>
-        <TextBlock Text="{Binding ResultLocalMin}" Margin="30,20,0,0" Grid.Row="2" Grid.Column="1"/>
+        <TextBlock Text="{Binding SecondResultMin}" Margin="30,20,0,0" Grid.Row="2" Grid.Column="1"/>
         <Popup Name="EdgeDetectionPopup" StaysOpen="False" Placement="Center">
             <StackPanel Background="White">
                 <StackPanel.Resources>

@@ -232,7 +232,7 @@ namespace Processing
 
         #region anomaly separation property.
 
-        private double[,] localData, resultLocalData;
+        private double[,] secondData, secondResultData;
 
         private int power;
 
@@ -355,6 +355,19 @@ namespace Processing
             }
         }
 
+        private double yantuogaodu;
+
+        public double 延拓高度
+        {
+            get { return yantuogaodu; }
+            set
+            {
+                yantuogaodu = value;
+                RaisePropertyChanged("延拓高度");
+            }
+        }
+
+
         public double[,] FiltData
         {
             get
@@ -417,39 +430,39 @@ namespace Processing
             }
         }
 
-        private double localMin;
+        private double secondMin;
 
-        public double LocalMin
+        public double SecondMin
         {
-            get { return localMin; }
+            get { return secondMin; }
             set
             {
-                localMin = value;
-                RaisePropertyChanged("LocalMin");
+                secondMin = value;
+                RaisePropertyChanged("SecondMin");
             }
         }
 
-        private double localMax;
+        private double secondMax;
 
-        public double LocalMax
+        public double SecondMax
         {
-            get { return localMax; }
+            get { return secondMax; }
             set
             {
-                localMax = value;
-                RaisePropertyChanged("LocalMax");
+                secondMax = value;
+                RaisePropertyChanged("SecondMax");
             }
         }
 
-        private WriteableBitmap localMap;
+        private WriteableBitmap secondMap;
 
-        public WriteableBitmap LocalMap
+        public WriteableBitmap SedondMap
         {
-            get { return localMap; }
+            get { return secondMap; }
             set
             {
-                localMap = value;
-                RaisePropertyChanged("LocalMap");
+                secondMap = value;
+                RaisePropertyChanged("SedondMap");
             }
         }
 
@@ -489,45 +502,45 @@ namespace Processing
             }
         }
 
-        private double resultLocalMin;
+        private double secondResultMin;
 
-        public double ResultLocalMin
+        public double SecondResultMin
         {
-            get { return resultLocalMin; }
+            get { return secondResultMin; }
             set
             {
-                resultLocalMin = value;
-                RaisePropertyChanged("ResultLocalMin");
+                secondResultMin = value;
+                RaisePropertyChanged("SecondResultMin");
             }
         }
 
-        private double resultLocalMax;
+        private double secondResultMax;
 
-        public double ResultLocalMax
+        public double SecondResultMax
         {
-            get { return resultLocalMax; }
+            get { return secondResultMax; }
             set
             {
-                resultLocalMax = value;
-                RaisePropertyChanged("ResultLocalMax");
+                secondResultMax = value;
+                RaisePropertyChanged("SecondResultMax");
             }
         }
 
-        private WriteableBitmap resultLocalMap;
+        private WriteableBitmap secondResultMap;
 
-        public WriteableBitmap ResultLocalMap
+        public WriteableBitmap SecondResultMap
         {
-            get { return resultLocalMap; }
+            get { return secondResultMap; }
             set
             {
-                resultLocalMap = value;
-                RaisePropertyChanged("ResultLocalMap");
+                secondResultMap = value;
+                RaisePropertyChanged("SecondResultMap");
             }
         }
         #endregion
 
         public DelegateCommand GridMinusCommand { get; set; }
-        public DelegateCommand GridSimplifyCommand { get; set; }
+        public DelegateCommand FillRestoreCommand { get; set; }
 
         public ViewModel()
         {
@@ -544,7 +557,7 @@ namespace Processing
             EdgeDetectCommand = new DelegateCommand(new Action<object>(EdgeDetect));
             SeparateCommand = new DelegateCommand(new Action<object>(Separate));
             GridMinusCommand = new DelegateCommand(new Action<object>(GridMinus));
-            GridSimplifyCommand = new DelegateCommand(new Action<object>(GridSimplify));
+            FillRestoreCommand = new DelegateCommand(new Action<object>(FillRestore));
 
             colormap = new Colormap();
             colormap.SetColors();
@@ -560,11 +573,11 @@ namespace Processing
             if (ofd.ShowDialog() == true)
             {
                 int rows, cols;
-                double xtick,ytick, zmin, zmax;
+                double xtick, ytick, zmin, zmax;
                 var para = Convert.ToString(parameter);
                 if (para == "Anomaly")
                 {
-                    anomalyData = OpenFile(ofd.OpenFile(),out rows,out cols,out xtick,out ytick, out zmin, out zmax);
+                    anomalyData = OpenFile(ofd.OpenFile(), out rows, out cols, out xtick, out ytick, out zmin, out zmax);
 
                     AnomalyMin = zmin;
                     AnomalyMax = zmax;
@@ -585,11 +598,11 @@ namespace Processing
                 }
                 else if (para == "Local")
                 {
-                    localData = OpenFile(ofd.OpenFile(), out rows, out cols, out xtick, out ytick, out zmin, out zmax);
+                    secondData = OpenFile(ofd.OpenFile(), out rows, out cols, out xtick, out ytick, out zmin, out zmax);
 
-                    LocalMin = zmin;
-                    LocalMax = zmax;
-                    LocalMap = GetMap(localData, zmin, zmax);
+                    SecondMin = zmin;
+                    SecondMax = zmax;
+                    SedondMap = GetMap(secondData, zmin, zmax);
                 }
             }
 
@@ -682,7 +695,7 @@ namespace Processing
                     }
                     else if (para == "Local")
                     {
-                        SaveFile(fileStream, resultLocalData);
+                        SaveFile(fileStream, secondResultData);
                     }
                 }
 
@@ -727,7 +740,7 @@ namespace Processing
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    resultData[i, j] = anomalyData[i, j] - localData[i, j];
+                    resultData[i, j] = anomalyData[i, j] - secondData[i, j];
                 }
             }
             var zmin = EdgeDetection.GetDataMin(resultData);
@@ -850,7 +863,7 @@ namespace Processing
                 resultData = Separation.InterpolateCut(anomalyData, expendMethod, radius, times);
             else if (index == 3)
             {
-                resultData = Separation.MoveAverage(anomalyData, localData, expendMethod, radiusMin, radiusMax, radiusTick, out int bestRadius);
+                resultData = Separation.MoveAverage(anomalyData, secondData, expendMethod, radiusMin, radiusMax, radiusTick, out int bestRadius);
                 Radius = bestRadius;
             }
             else if (index == 4)
@@ -859,9 +872,13 @@ namespace Processing
                 resultData = Separation.FilterMoveAverage(anomalyData, FiltData, expendMethod, radius);
             else if (index == 6)
                 resultData = FiltData;
-            else if(index==7)
+            else if (index == 7)
             {
                 resultData = Separation.FilterProject(anomalyData, expendMethod, project);
+            }
+            else if (index == 8)
+            {
+                resultData = EdgeDetection.ExpandRestore(FFT.idft_2D(EdgeDetection.延拓(FrqData, 延拓高度)).GetRe());
             }
 
             var zmin = EdgeDetection.GetDataMin(resultData);
@@ -872,25 +889,53 @@ namespace Processing
 
             if (index != 6)
             {
-                resultLocalData = new double[rows, cols];
+                secondResultData = new double[rows, cols];
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = 0; j < cols; j++)
                     {
-                        resultLocalData[i, j] = anomalyData[i, j] - resultData[i, j];
+                        secondResultData[i, j] = anomalyData[i, j] - resultData[i, j];
                     }
                 }
             }
             else
             {
-                resultLocalData = Separation.AverageFill(resultData);
+                secondResultData = Separation.AverageFill(resultData);
             }
 
-            zmin = EdgeDetection.GetDataMin(resultLocalData);
-            zmax = EdgeDetection.GetDataMax(resultLocalData);
-            ResultLocalMin = zmin;
-            ResultLocalMax = zmax;
-            ResultLocalMap = GetMap(resultLocalData, zmin, zmax);
+            zmin = EdgeDetection.GetDataMin(secondResultData);
+            zmax = EdgeDetection.GetDataMax(secondResultData);
+            SecondResultMin = zmin;
+            SecondResultMax = zmax;
+            SecondResultMap = GetMap(secondResultData, zmin, zmax);
+        }
+
+        private void FillRestore(object parameter)
+        {
+            int rows = anomalyData.GetLength(0);
+            int cols = anomalyData.GetLength(1);
+
+            resultData = new double[rows, cols];
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (secondData[i, j] == 1.70141e38)
+                    {
+                        resultData[i, j] = 1.70141e38;
+                    }
+                    else
+                    {
+                        resultData[i, j] = anomalyData[i, j];
+                    }
+                }
+            }
+
+            var zmin = EdgeDetection.GetDataMin(resultData);
+            var zmax = EdgeDetection.GetDataMax(resultData);
+            ResultMin = zmin;
+            ResultMax = zmax;
+            ResultMap = GetMap(resultData, zmin, zmax);
         }
     }
 }

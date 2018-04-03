@@ -266,6 +266,24 @@ namespace Processing
             return zdrfData;
         }
 
+        public static Complex2D 延拓(Complex2D frqData, double 延拓高度)
+        {
+            int height = frqData.Height;
+            int whith = frqData.Width;
+            var 延拓结果 = new Complex2D(height, whith);
+            var coex = Coeff(whith, xtick);
+            var coey = Coeff(height, ytick);
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < whith; j++)
+                {
+                    var a = Math.Sqrt(coey[i] * coey[i] + coex[j] * coex[j]) * 延拓高度;
+                    延拓结果[i, j] = frqData[i, j] * Math.Exp(a);
+                }
+            }
+            return 延拓结果;
+        }
+
         public static Complex2D Vxx(Complex2D frqData)
         {
             int height = frqData.Height;
@@ -635,7 +653,7 @@ namespace Processing
             {
                 for (int j = 0; j < ncols; j++)
                 {
-                    ETA1Data[i, j] = Math.Atan(Math.Sqrt(zdrxdrData[i, j] * zdrxdrData[i, j] + zdrydrData[i, j] * zdrydrData[i, j] * c1) / Math.Abs(zdrzdrData[i, j]));
+                    ETA1Data[i, j] = Math.Atan(Math.Sqrt(zdrxdrData[i, j] * zdrxdrData[i, j] + zdrydrData[i, j] * zdrydrData[i, j] ) * c1 / Math.Abs(zdrzdrData[i, j]));
                 }
             }
 
